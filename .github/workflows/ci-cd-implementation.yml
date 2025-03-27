@@ -25,6 +25,8 @@ jobs:
               uses: actions/setup-node@v3
               with:
                 node-version: '22'
+                registry-url: 'https://registry.npmjs.org/'
+                scope: '@siemens'
             
             - name: Install dependencies
               run: npm ci
@@ -39,9 +41,7 @@ jobs:
               run: npm run build
 
             - name: Publish to npm
-              if:  startsWith(github.ref, 'refs/tags/v')  # Publish only for version tags
+              if: startsWith(github.ref, 'refs/tags/v')
               env:   
-                NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}} # npm authentication token
-              run: |
-                npm config set @siemens:registry https://registry.npmjs.org/
-                npm publish --access public
+                NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+              run: npm publish --access public
