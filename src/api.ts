@@ -554,16 +554,16 @@ export class SessionInfo {
   username: string = '';
   password_expiration?: SessionInfoPasswordExpiration;
   runtime_timeout?: string;
-  
 }
 
 export class ApiGetSessionInfo extends request.JsonrpcBaseRequest {
-  constructor(config: request.RequestConfig) {
+  constructor (config: request.RequestConfig) {
     const method = 'Api.GetSessionInfo';
-    
+
     super(config.address, config.protocol, config.verifyTls, method);
   }
-  public parse(response: response.JsonrpcBaseResponse): ApiGetSessionInfoResponse | null {
+
+  public parse (response: response.JsonrpcBaseResponse): ApiGetSessionInfoResponse | null {
     const logger = pino();
 
     if (response.is_error() || !response.result) {
@@ -580,7 +580,7 @@ export class ApiGetSessionInfo extends request.JsonrpcBaseRequest {
     if (responseProcess.result !== undefined) {
 
       for (const [key, value] of Object.entries(responseProcess.result) as [string, unknown][]) {
-        if (typeof key === 'string'){
+        if (typeof key === 'string') {
           switch (key) {
             case 'authentication_mode':
               Var = Var || new SessionInfo();

@@ -99,7 +99,6 @@ export class JsonrpcBaseRequest {
     } catch (error) {
       console.warn('Failed to create HTTPS Agent:', error);
     }
-    
     return undefined;
   }
 
@@ -150,12 +149,11 @@ export class JsonrpcBaseRequest {
      * @param {Axios} axiosObject - The Axios object used for making the POST request.
      * @returns {Promise<AxiosResponse>} A Promise that resolves to an Axios response.
      */
-    
     // Create request config with browser compatibility in mind
-    const requestConfig: any = { 
-      headers: this.headers() 
+    const requestConfig: any = {
+      headers: this.headers()
     };
-    
+
     // Only add httpsAgent if we're not in a browser
     if (!isBrowser) {
       const agent = this.gethttpsAgent();
@@ -183,7 +181,7 @@ export class JsonrpcBaseRequest {
 
     try {
       const post_res = await this.request();
-      
+
       logger.debug(this.__str__());
       logger.debug(this.format_response());
 
@@ -191,7 +189,7 @@ export class JsonrpcBaseRequest {
         logger.error('Response was empty, unable to parse');
         return null;
       }
-      
+
       const res = response.JsonrpcBaseResponse.parse(post_res);
 
       if (res === undefined) {
@@ -199,13 +197,13 @@ export class JsonrpcBaseRequest {
         console.log(('Unable to parse the response, it is not typical jsonrpc format'));
         return null;
       }
-      
+
       if (res?.is_error() === true) {
         logger.error(`WebAPI responded with an error: ${res.error?.toString()}`);
         console.log(`WebAPI responded with an error: ${res.error?.toString()}`);
         return null;
       }
-      
+
       if (res) {
         return this.parse(res);
       }
@@ -213,7 +211,7 @@ export class JsonrpcBaseRequest {
       logger.error('Request execution failed:', error);
       console.error('Request execution failed:', error);
     }
-    
+
     return null;
   }
 
@@ -238,7 +236,7 @@ export class JsonrpcBaseRequest {
     const requestConfig: any = {
       headers: requestObject.headers
     };
-    
+
     // Only add httpsAgent if not in browser environment
     if (!isBrowser && requestObject.httpsAgent) {
       requestConfig.httpsAgent = requestObject.httpsAgent;
@@ -278,7 +276,7 @@ export class JsonrpcBaseRequest {
 
     try {
       const post_res = await this.bulkRequest(requestObject) as AxiosResponse;
-      
+
       logger.debug(this.__str__());
       logger.debug(this.format_response());
 
@@ -306,7 +304,7 @@ export class JsonrpcBaseRequest {
      */
     // Use console in browser, pino in Node
     const logger = isBrowser ? console : pino();
-    
+
     if (response.is_error() === true) {
       if (isBrowser) {
         console.debug('Response has error');
@@ -315,7 +313,7 @@ export class JsonrpcBaseRequest {
       }
       return null;
     }
-    
+
     if (response.result === undefined) {
       if (isBrowser) {
         console.debug('Response result structure is null');
