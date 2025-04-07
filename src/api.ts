@@ -545,3 +545,82 @@ export class ApiGetAuthenticationModeResponse extends response.JsonrpcBaseRespon
     super('ApiGetAuthenticationMode');
   }
 }
+export class SessionInfoPasswordExpiration {
+  timestamp: string = '';
+  warning: boolean = false;
+}
+export class SessionInfo {
+  authentication_mode?: string;
+  username: string = '';
+  password_expiration?: SessionInfoPasswordExpiration;
+  runtime_timeout?: string;
+  
+}
+
+export class ApiGetSessionInfo extends request.JsonrpcBaseRequest {
+  constructor(config: request.RequestConfig) {
+    const method = 'Api.GetSessionInfo';
+    
+    super(config.address, config.protocol, config.verifyTls, method);
+  }
+  public parse(response: response.JsonrpcBaseResponse): ApiGetSessionInfoResponse | null {
+    const logger = pino();
+
+    if (response.is_error() || !response.result) {
+      logger.error('Response has error or response result does not exist');
+      return null;
+    }
+
+    let container: SessionInfo = new SessionInfo();
+    let Var: SessionInfo | null = null;
+    const responseR = new ApiGetSessionInfoResponse();
+    const responseProcess = new ApiGetSessionInfoResponse();
+    responseProcess.result = response.result;
+
+    if (responseProcess.result !== undefined) {
+
+      for (const [key, value] of Object.entries(responseProcess.result) as [string, unknown][]) {
+        if (typeof key === 'string'){
+          switch (key) {
+            case 'authentication_mode':
+              Var = Var || new SessionInfo();
+              Var.authentication_mode = value as string;
+              break;
+            case 'username':
+              Var = Var || new SessionInfo();
+              Var.username = value as string;
+              break;
+            case 'password_expiration':
+              Var = Var || new SessionInfo();
+              if (typeof value === 'object' && value !== null) {
+                const sessionPassword = new SessionInfoPasswordExpiration();
+                sessionPassword.timestamp = (value as any).timestamp || '';
+                sessionPassword.warning = (value as any).warning || false;
+                Var.password_expiration = sessionPassword;
+              }
+              break;
+            case 'runtime_timeout':
+              Var = Var || new SessionInfo();
+              Var.runtime_timeout = value as string;
+              break;
+          }
+        }
+        if (Var !== null) {
+          container = Var;
+        }
+      }
+      responseR.error = response.error;
+      responseR.id = response.id;
+      responseR.result = container;
+      return responseR;
+    }
+    return null;
+  }
+}
+
+export class ApiGetSessionInfoResponse extends response.JsonrpcBaseResponse {
+  result?: SessionInfo;
+  constructor () {
+    super('ApiGetSessionInfo');
+  }
+}
