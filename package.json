@@ -19,7 +19,7 @@
     "path-browserify": "^1.0.1"
   },
   "name": "@siemens/simatic-s7-webserver-api",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "publishConfig": {
     "access": "public"
   },
