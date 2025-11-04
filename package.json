@@ -19,7 +19,7 @@
     "util": "^0.12.5"
   },
   "name": "@siemens/simatic-s7-webserver-api",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "publishConfig": {
     "access": "public"
   },
