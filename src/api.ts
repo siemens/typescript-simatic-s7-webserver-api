@@ -125,7 +125,10 @@ export class ApiGetPermissions extends request.JsonrpcBaseRequest {
     }
 
     if (response.result?.length === 0) {
-      return null;
+      responseR.result = [];
+      responseR.error = response.error;
+      responseR.id = response.id;
+      return responseR;
     }
     if (responseProcess.result !== undefined) {
       for (const value of Object.values(responseProcess.result)) {
@@ -525,7 +528,7 @@ export class ApiGetAuthenticationMode extends request.JsonrpcBaseRequest {
     if (responseProcess.result !== undefined) {
       for (const [key, value] of Object.entries(response.result) as unknown as [string, string[]]) { // First is mandatory to put unknown to do that typescript believe on what you expect on the response type
         if (key === 'authentication_modes') {
-          container.push(value);
+          container.push(...value);
         }
       }
     }
@@ -565,15 +568,29 @@ export class ApiGetSessionInfo extends request.JsonrpcBaseRequest {
 
   public parse (response: response.JsonrpcBaseResponse): ApiGetSessionInfoResponse | null {
     const logger = pino();
+    const responseR = new ApiGetSessionInfoResponse();
 
-    if (response.is_error() || !response.result) {
-      logger.error('Response has error or response result does not exist');
-      return null;
+    // Handle error responses
+    if (response.is_error()) {
+      logger.error(`GetSessionInfo error: [${response.error}]`);
+      responseR.error = response.error;
+      responseR.id = response.id;
+      responseR.result = undefined;
+      return responseR;  // ← Return response with error, not null
+    }
+
+    // Handle missing result
+    if (!response.result) {
+      logger.error('Response result does not exist');
+      responseR.error = undefined;
+      responseR.id = response.id;
+      responseR.result = undefined;
+      return responseR;
     }
 
     let container: SessionInfo = new SessionInfo();
     let Var: SessionInfo | null = null;
-    const responseR = new ApiGetSessionInfoResponse();
+    
     const responseProcess = new ApiGetSessionInfoResponse();
     responseProcess.result = response.result;
 
