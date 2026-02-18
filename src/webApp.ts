@@ -614,3 +614,44 @@ export class WebAppBrowseResourcesResponse extends response.JsonrpcBaseResponse 
     super('WebAppBrowseResources');
   }
 }
+
+
+export class WebAppSetVersion extends request.JsonrpcBaseRequest {
+  constructor(config: request.RequestConfig, token: string, name: string, version: string){
+    super(config.address, config.protocol, config.verifyTls, undefined, undefined, token);
+
+    this.method = 'WebApp.SetVersion';
+    this.params = { name, version };
+  }
+
+  public parse(response: response.JsonrpcBaseResponse): WebAppSetVersionResponse | null {
+    const logger = pino.pino();
+    logger.level = 'debug';
+    //     transport: {
+    //         target: 'pino-pretty',
+    //         options: {}
+    //     }
+    // });
+
+    const responseR = new WebAppSetVersionResponse();
+
+    responseR.error = response.error;
+    responseR.id = response.id;
+    if (response.is_error() || !response.result) {
+      logger.error('Response has error or response result does not exist');
+      return null;
+    }
+    if (response.result) {
+      responseR.result = response.result;
+      return responseR;
+    }
+    return null;
+  }
+}
+
+export class WebAppSetVersionResponse extends response.JsonrpcBaseResponse {
+  result?: boolean;
+  constructor () {
+    super('WebAppSetVersion');
+  }
+}
