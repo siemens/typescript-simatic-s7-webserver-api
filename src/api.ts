@@ -576,7 +576,7 @@ export class ApiGetSessionInfo extends request.JsonrpcBaseRequest {
       responseR.error = response.error;
       responseR.id = response.id;
       responseR.result = undefined;
-      return responseR;  // ← Return response with error, not null
+      return responseR; // ← Return response with error, not null
     }
 
     // Handle missing result
@@ -590,7 +590,6 @@ export class ApiGetSessionInfo extends request.JsonrpcBaseRequest {
 
     let container: SessionInfo = new SessionInfo();
     let Var: SessionInfo | null = null;
-    
     const responseProcess = new ApiGetSessionInfoResponse();
     responseProcess.result = response.result;
 

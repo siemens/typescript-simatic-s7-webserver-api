@@ -85,15 +85,14 @@ export class WebServerReadDefaultPageResponse extends response.JsonrpcBaseRespon
   }
 }
 
-
 export class WebServerReadResponseHeaders extends request.JsonrpcBaseRequest {
-  constructor(config: request.RequestConfig, token: string){
+  constructor (config: request.RequestConfig, token: string) {
     super(config.address, config.protocol, config.verifyTls, undefined, undefined, token);
 
-    this.method = 'WebServer.ReadResponseHeaders'
+    this.method = 'WebServer.ReadResponseHeaders';
   }
 
-  public parse(response: response.JsonrpcBaseResponse): WebServerReadResponseHeadersResponse | null {
+  public parse (response: response.JsonrpcBaseResponse): WebServerReadResponseHeadersResponse | null {
     const logger = pino.pino();
     logger.level = 'debug';
 
@@ -143,20 +142,6 @@ export class WebServerReadResponseHeaders extends request.JsonrpcBaseRequest {
   }
 }
 
-export class WebServerReadResponseHeadersResponse extends response.JsonrpcBaseResponse {
-  result?: HeadersResponse;
-
-  constructor() {
-    super('WebServerReadResponseHeaders');
-  }
-}
-
-export class HeadersResponse {
-  configured_headers : WebServer_ReadResponseHeaders_Configured_Response[] = [];
-  allowed_headers: WebServer_ReadResponseHeaders_Allowed_Response[] = [];
-
-}
-
 class WebServer_ReadResponseHeaders_Configured_Response {
   pattern : string = '';
   header : string = '';
@@ -167,17 +152,30 @@ class WebServer_ReadResponseHeaders_Allowed_Response {
   key : string = '';
 }
 
+export class HeadersResponse {
+  configured_headers : WebServer_ReadResponseHeaders_Configured_Response[] = [];
+  allowed_headers: WebServer_ReadResponseHeaders_Allowed_Response[] = [];
+}
+
+export class WebServerReadResponseHeadersResponse extends response.JsonrpcBaseResponse {
+  result?: HeadersResponse;
+
+  constructor () {
+    super('WebServerReadResponseHeaders');
+  }
+}
+
 export class WebServerChangeResponseHeaders extends request.JsonrpcBaseRequest {
-  constructor(config: request.RequestConfig, token: string, pattern : string, header : string){
+  constructor (config: request.RequestConfig, token: string, pattern: string, header: string) {
     super(config.address, config.protocol, config.verifyTls, undefined, undefined, token);
 
     this.method = 'WebServer.ChangeResponseHeaders';
-    this.params = { 
+    this.params = {
       headers: [{ pattern, header }]
     };
   }
 
-  public parse(response: response.JsonrpcBaseResponse): WebServerChangeResponseHeadersResponse | null {
+  public parse (response: response.JsonrpcBaseResponse): WebServerChangeResponseHeadersResponse | null {
     const logger = pino.pino();
     logger.level = 'debug';
     //     transport: {

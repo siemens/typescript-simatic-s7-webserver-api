@@ -615,16 +615,15 @@ export class WebAppBrowseResourcesResponse extends response.JsonrpcBaseResponse 
   }
 }
 
-
 export class WebAppSetVersion extends request.JsonrpcBaseRequest {
-  constructor(config: request.RequestConfig, token: string, name: string, version: string){
+  constructor (config: request.RequestConfig, token: string, name: string, version: string) {
     super(config.address, config.protocol, config.verifyTls, undefined, undefined, token);
 
     this.method = 'WebApp.SetVersion';
     this.params = { name, version };
   }
 
-  public parse(response: response.JsonrpcBaseResponse): WebAppSetVersionResponse | null {
+  public parse (response: response.JsonrpcBaseResponse): WebAppSetVersionResponse | null {
     const logger = pino.pino();
     logger.level = 'debug';
     //     transport: {

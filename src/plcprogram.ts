@@ -16,7 +16,7 @@ export class PlcProgramBrowseVariable {
   area ?: string;
   datatype : string = '';
   max_length ?: number;
-  array_dimensions ?: PlcProgramBrowseArrayData;
+  array_dimensions ?: PlcProgramBrowseArrayData[];
   block_number ?: number;
   block_type ?: string;
 
@@ -31,8 +31,9 @@ export class PlcProgramBrowse extends request.JsonrpcBaseRequest {
     } else {
       if (type !== undefined) {
         params = { mode, type };
+      } else {
+        params = { mode };
       }
-      params = { mode };
     }
 
     // reading the examples that if there is Var there is no type.
@@ -62,20 +63,26 @@ export class PlcProgramBrowse extends request.JsonrpcBaseRequest {
         Vars = new PlcProgramBrowseVariable();
         if (Vars !== null) {
           Vars.name = value.name || '';
-          Vars.address = value.address || undefined;
-          Vars.read_only = Boolean(value.read_only) || undefined;
-          Vars.has_children = Boolean(value.db_number) || undefined;
+          Vars.address = value.address !== undefined ? String(value.address) : undefined;
+          Vars.read_only = value.read_only !== undefined ? Boolean(value.read_only) : undefined;
+          Vars.has_children = value.has_children !== undefined ? Boolean(value.has_children) : undefined;
+          Vars.db_number = value.db_number !== undefined ? Number(value.db_number) : undefined;
           Vars.area = value.area || undefined;
           Vars.datatype = value.datatype || '';
-          Vars.max_length = Number(value.max_length) || undefined;
+          Vars.max_length = value.max_length !== undefined ? Number(value.max_length) : undefined;
 
-          if (value === 'array_dimensions') {
-            Vars.array_dimensions = new PlcProgramBrowseArrayData();
-            Vars.array_dimensions.start_index = Number(value.array_dimensions.start_index) || 0;
-            Vars.array_dimensions.count = Number(value.array_dimensions.count) || 0;
-
+          if (value.array_dimensions) {
+            const rawDims = Array.isArray(value.array_dimensions)
+              ? value.array_dimensions
+              : [value.array_dimensions];
+            Vars.array_dimensions = rawDims.map((dim: any) => {
+              const entry = new PlcProgramBrowseArrayData();
+              entry.start_index = Number(dim.start_index) || 0;
+              entry.count = Number(dim.count) || 0;
+              return entry;
+            });
           }
-          Vars.block_number = Number(value.block_number) || 0;
+          Vars.block_number = value.block_number !== undefined ? Number(value.block_number) : undefined;
           Vars.block_type = value.block_type || undefined;
           container.push(Vars);
         }
